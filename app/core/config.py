@@ -5,6 +5,6 @@ load_dotenv()
 
 class Settings:
     KAFKA_BOOTSTRAP = os.getenv("KAFKA_BOOTSTRAP", "localhost:9092")
-    API_BASE_URL = os.getenv("API_BASE_URL", "http://api.example.com/transcripts/")
+    API_BASE_URL = os.getenv("API_BASE_URL")
 
 settings = Settings()

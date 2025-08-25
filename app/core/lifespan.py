@@ -12,6 +12,5 @@ async def lifespan(app: FastAPI):
         logger.info("Application Startup Complete")
         yield 
         logger.info("Shutting down Microservice Application")
-        await client.aclose()
         logger.info("Microservice Application Shut Down")
         

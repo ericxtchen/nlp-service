@@ -3,6 +3,11 @@ from app.core.lifespan import lifespan
 from app.api.routes import router as api_router
 from app.events.router import router as kafka_router
 
+#TODO:
+# 1. Add NLP processing logic in process_transcript function in services/transcript.py
+# 2. Define data schemas for transcript and NLP results
+# 3. Implement error handling and retries for external API calls
+
 # The primary FastAPI application is the single source of truth
 app = FastAPI(
     title="Meeting Transcript NLP Processor",

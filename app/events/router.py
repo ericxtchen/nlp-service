@@ -11,7 +11,7 @@ router = KafkaRouter(settings.KAFKA_BOOTSTRAP)
 async def process_message(msg: str):
     try:
         logger.info(f"Received bot ID message: {msg}")
-        from main import app
+        from app.main import app
         client = app.state.http_client
         transcript_data = await fetch_transcript(msg, client) # standardize what we get from fetch_transcript using a schema if recall.ai doesn't have one
         nlp_results = process_transcript(transcript_data)
@@ -20,7 +20,7 @@ async def process_message(msg: str):
                 nlp_results,
                 topic="nlp-results"
             )
-        logger.info(f"Published NLP results for meeting: {transcript_data.meeting_id}")
+        logger.info(f"Published NLP results for meeting: {transcript_data['meeting_id']}")
     except Exception as e:
         logger.error(f"Error processing bot_id {msg}: {str(e)}")
         raise
