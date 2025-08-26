@@ -34,4 +34,7 @@ def transcript_to_text(transcript: dict) -> str:
         text_segments.append(segment)
     return "\n".join(text_segments)
 def process_transcript(text: str):
-    pass
+    from app.services.nlp_model import NLP_Model
+    nlp_model = NLP_Model()
+    nlp_results = nlp_model.analyze(text)
+    return nlp_results

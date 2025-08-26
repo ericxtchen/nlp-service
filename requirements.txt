@@ -1,4 +1,5 @@
 transformers
 fastapi
-faststream
+faststream[kafka]
 httpx
+uvicorn[standard]
