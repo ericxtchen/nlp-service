@@ -5,7 +5,7 @@ from app.events.router import router as kafka_router
 
 #TODO:
 # 1. Add NLP processing logic in process_transcript function in services/transcript.py
-# 2. Define data schemas for transcript and NLP results
+# 2. Define data schemas for  NLP results
 # 3. Implement error handling and retries for external API calls
 
 # The primary FastAPI application is the single source of truth

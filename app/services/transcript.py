@@ -24,6 +24,14 @@ async def fetch_transcript(bot_id: str, client: httpx.AsyncClient):
     except Exception as e:
         logger.error(f"Error fetching transcript for bot_id {bot_id}: {str(e)}")
         raise
-
-def process_transcript(transcript: dict):
+def transcript_to_text(transcript: dict) -> str:
+    text_segments = []
+    for entry in transcript.get("entries", []):
+        participant = entry.get("participant", {})
+        name = participant.get("name") or participant.get("email") or "Unknown"
+        words = entry.get("words", [])
+        segment = f"{name}: " + " ".join(word.get("text", "") for word in words)
+        text_segments.append(segment)
+    return "\n".join(text_segments)
+def process_transcript(text: str):
     pass
