@@ -15,7 +15,7 @@ class NlpProcessor:
             model_name (str): The identifier of the Hugging Face model to use.
         """
         self.model_name = model_name
-        self.pipe = None # This will hold our loaded model pipeline
+        self.pipe = None
 
     def load_model(self):
         """
@@ -23,9 +23,6 @@ class NlpProcessor:
         """
         try:
             print(f"Loading model: {self.model_name}...")
-            # The 'pipeline' is the easiest way to use a model for inference.
-            # We specify the "text-generation" task.
-            # device_map="auto" tells transformers to automatically use a GPU if available.
             self.pipe = pipeline(
                 "text-generation",
                 model=self.model_name,
@@ -40,7 +37,7 @@ class NlpProcessor:
     def process_transcript(self, transcript_text: str) -> dict:
         """
         Takes a raw meeting transcript and uses the loaded LLM to extract a
-        summary, blockers, and action items in a structured JSON format.
+        summary and blockers in a structured JSON format.
 
         Args:
             transcript_text (str): The full text of the meeting transcript.
@@ -53,10 +50,6 @@ class NlpProcessor:
             print("Error: Model is not loaded. Please call load_model() first.")
             return self._get_error_structure("Model not loaded")
 
-        # --- The Core of the Process: The Prompt ---
-        # This is where you instruct the model on exactly what to do.
-        # We provide a clear role, the task, the input data, and the desired output format.
-        # Using a structured prompt like this is called "Prompt Engineering".
         prompt = f"""
         You are an expert AI assistant specializing in analyzing Scrum meeting transcripts.
         Your task is to process the following meeting transcript and extract key information.
@@ -64,7 +57,7 @@ class NlpProcessor:
         Please provide the output in a clean, valid JSON format with the following keys:
         - "summary": A concise, one-paragraph summary of the meeting.
         - "blockers": A list of strings, where each string is a potential blocker or impediment mentioned. If none, provide an empty list.
-        - "action_items": A list of strings, where each string is a clear, actionable task assigned to someone. If none, provide an empty list.
+    
 
         Here is an example of the desired JSON output structure:
         ```json
@@ -72,9 +65,6 @@ class NlpProcessor:
             "summary": "The team discussed progress on the user authentication feature. Alice is nearly done with the front-end, but Bob is blocked on the database migration. An action item was created for Carol to grant Bob the necessary permissions.",
             "blockers": [
                 "Bob is blocked on the database migration due to lack of permissions."
-            ],
-            "action_items": [
-                "Carol to grant database permissions to Bob by end of day."
             ]
         }}
         ```
@@ -95,10 +85,6 @@ class NlpProcessor:
         generated_text = ""
         try:
             print("Generating analysis from transcript...")
-            # --- Passing the Input to the Model ---
-            # We pass the structured prompt to the pipeline.
-            # max_new_tokens limits the length of the response to prevent run-on answers.
-            # do_sample=True and temperature/top_p encourage more creative/natural summaries.
             outputs = self.pipe(
                 messages,
                 max_new_tokens=512,
@@ -106,15 +92,8 @@ class NlpProcessor:
                 temperature=0.6,
                 top_p=0.9,
             )
-
-            # The pipeline returns a list of generated texts. We only need the first one.
-            # The actual result is nested inside the response structure.
             generated_text = outputs[0]["generated_text"][-1]['content']
 
-            # --- Parsing and Validation ---
-            # The model's output is a string. We need to parse it into a Python dictionary.
-            # It's crucial to wrap this in a try-except block because the LLM might
-            # occasionally produce malformed JSON or add extra text.
             print("Parsing model output...")
             # Find the start and end of the JSON block to be safe
             json_start = generated_text.find('{')
